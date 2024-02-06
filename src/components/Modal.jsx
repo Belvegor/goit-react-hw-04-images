@@ -1,23 +1,29 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styles from './styles.module.css';
 
 const Modal = ({ imageUrl, onClose }) => {
   const modalRef = useRef(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback(
+    (e) => {
       if (e.code === 'Escape') {
         onClose();
       }
-    };
+    },
+    [onClose]
+  );
 
-    const handleClickOutside = (e) => {
+  const handleClickOutside = useCallback(
+    (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         onClose();
       }
-    };
+    },
+    [onClose]
+  );
 
+  useEffect (() => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('mousedown', handleClickOutside);
 
@@ -25,7 +31,8 @@ const Modal = ({ imageUrl, onClose }) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose]);
+  }, [handleKeyDown, handleClickOutside]);
+  
 
   return (
     <div className={styles.Overlay}>
